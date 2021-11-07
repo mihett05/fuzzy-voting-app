@@ -1,23 +1,28 @@
 import React, { useContext } from 'react';
-import { useNavigate } from 'react-router';
+import { Link } from 'react-router-dom';
+import { useAsyncFn } from 'react-use';
 
-import { FaSignInAlt, FaSignOutAlt } from 'react-icons/fa';
+import { FaSignInAlt, FaUser } from 'react-icons/fa';
 import { Container, Flex, Spacer, Heading, Button, Box } from '@chakra-ui/react';
 
-import { auth } from '../firebase';
+import { createPoll } from '../db';
 import { AuthContext } from './AuthProvider';
 
 function Header() {
   const user = useContext(AuthContext);
-  const navigate = useNavigate();
-
-  const onAccountClick = () => {
-    if (user === null) {
-      navigate('/auth');
-    } else {
-      auth.signOut();
-    }
-  };
+  const [creatingPollState, onCreatePoll] = useAsyncFn(
+    () =>
+      new Promise((resolve, reject) => {
+        // Additional waiting to prevent creating lots of polls in one time
+        createPoll()
+          .then((res) => {
+            setTimeout(() => {
+              resolve(res);
+            }, 300);
+          })
+          .catch(reject);
+      }),
+  );
 
   return (
     <Container maxW="container.xl">
@@ -27,10 +32,14 @@ function Header() {
         </Heading>
         <Spacer />
         <Box p="2">
-          <Button>Create Poll</Button>
+          <Button onClick={onCreatePoll} isLoading={creatingPollState.loading}>
+            Create Poll
+          </Button>
         </Box>
         <Box p="2">
-          <Button onClick={onAccountClick}>{user === null ? <FaSignInAlt /> : <FaSignOutAlt />}</Button>
+          <Link to="/account">
+            <Button>{user === null ? <FaSignInAlt /> : <FaUser />}</Button>
+          </Link>
         </Box>
       </Flex>
     </Container>

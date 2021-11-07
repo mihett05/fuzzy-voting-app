@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
-import { onAuthStateChanged, User } from 'firebase/auth';
+import { User } from 'firebase/auth';
+import { Center, CircularProgress } from '@chakra-ui/react';
 
 import { auth } from '../firebase';
 
@@ -20,9 +21,17 @@ function AuthProvider({ children }: AuthProviderProps) {
     });
   });
 
-  console.log(currentUser);
-
-  return <AuthContext.Provider value={currentUser}>{!loading && children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={currentUser}>
+      {loading ? (
+        <Center>
+          <CircularProgress isIndeterminate color="teal.300" />
+        </Center>
+      ) : (
+        children
+      )}
+    </AuthContext.Provider>
+  );
 }
 
 export default AuthProvider;

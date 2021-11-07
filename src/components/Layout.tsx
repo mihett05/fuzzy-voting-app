@@ -11,7 +11,7 @@ function Layout({ children }: LayoutProps) {
   return (
     <div>
       <Header />
-      <Container>{children}</Container>
+      <Container maxW="container.lg">{children}</Container>
     </div>
   );
 }

@@ -7,7 +7,7 @@ import Layout from './Layout';
 import AuthProvider from './AuthProvider';
 
 import Home from '../pages/home';
-import Auth from '../pages/auth';
+import Account from '../pages/account';
 
 function App() {
   return (
@@ -18,7 +18,7 @@ function App() {
             <Routes>
               <Route path="/">
                 <Route index element={<Home />} />
-                <Route path="auth" element={<Auth />} />
+                <Route path="account" element={<Account />} />
               </Route>
             </Routes>
           </Layout>
