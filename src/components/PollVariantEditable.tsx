@@ -11,7 +11,6 @@ import {
   Spacer,
 } from '@chakra-ui/react';
 import { CheckIcon, CloseIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons';
-import { removePollVariant } from '../db';
 
 interface PollVariantEditableProps {
   value: string;

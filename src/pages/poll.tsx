@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router';
-import { query, ref, onValue } from 'firebase/database';
-import { Heading, Center, RadioGroup, Radio, Stack, Button, Flex, Box, Spacer, IconButton } from '@chakra-ui/react';
-import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
+import React from 'react';
+import { useParams } from 'react-router';
+import { Heading, Center } from '@chakra-ui/react';
 
-import { auth, db } from '../firebase';
-import { Poll, addPollVariant, editPollVariant, removePollVariant, sortByTimestamp } from '../db';
+import { auth } from '../firebase';
 import PollLoading from '../components/PollLoading';
 import PollEdit from '../components/PollEdit';
 import PollVote from '../components/PollVote';
