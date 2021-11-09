@@ -6,14 +6,21 @@ import { auth, db } from './firebase';
 export type Poll = {
   name: string;
   timestamp: number;
+  multiChoice: boolean;
   variants?: Record<string, Variant>;
 };
 
 export type Variant = {
   content: string;
+  timestamp: number;
 };
 
 export type Polls = Record<string, Poll>;
+
+interface EditPoll {
+  name?: string;
+  multiChoice?: boolean;
+}
 
 export const createPoll = async (): Promise<string | null> => {
   if (auth.currentUser) {
@@ -22,13 +29,23 @@ export const createPoll = async (): Promise<string | null> => {
     await set(pollRef, {
       name: `Poll ${uuid}`,
       timestamp: new Date().getTime(),
-      variants: {},
-    });
+      multiChoice: false,
+    } as Poll);
 
     return uuid;
   }
 
   return null;
+};
+
+export const editPoll = async (pollUuid: string, edit: EditPoll) => {
+  if (auth.currentUser) {
+    if (Object.keys(edit).length !== 0) {
+      // check if any changes will be applied
+      const pollRef = ref(db, `polls/${auth.currentUser.uid}/${pollUuid}`);
+      await update(pollRef, edit);
+    }
+  }
 };
 
 export const removePoll = async (pollUuid: string) => {
@@ -44,7 +61,8 @@ export const addPollVariant = async (pollUuid: string): Promise<string | null> =
     const pollVariantRef = ref(db, `polls/${auth.currentUser.uid}/${pollUuid}/variants/${variantUid}`);
     await set(pollVariantRef, {
       content: `Variant ${variantUid}`,
-    });
+      timestamp: new Date().getTime(),
+    } as Variant);
 
     return variantUid;
   }
@@ -57,7 +75,7 @@ export const editPollVariant = async (pollUuid: string, variantUuid: string, var
     const pollVariantRef = ref(db, `polls/${auth.currentUser.uid}/${pollUuid}/variants/${variantUuid}`);
     await update(pollVariantRef, {
       content: variant,
-    });
+    } as Variant);
   }
 };
 
@@ -67,3 +85,13 @@ export const removePollVariant = async (pollUuid: string, variantUuid: string) =
     await remove(pollVariantRef);
   }
 };
+
+export const sortByTimestamp = (uuids: Record<string, { timestamp: number }>) =>
+  Object.keys(uuids).sort((a: string, b: string) => {
+    const tsA = uuids[a].timestamp;
+    const tsB = uuids[b].timestamp;
+
+    if (tsA < tsB) return -1;
+    else if (tsA === tsB) return 0;
+    else return 1;
+  });

@@ -6,8 +6,10 @@ import { ChakraProvider } from '@chakra-ui/react';
 import Layout from './Layout';
 import AuthProvider from './AuthProvider';
 
-import Home from '../pages/home';
-import Account from '../pages/account';
+import HomePage from '../pages/home';
+import AccountPage from '../pages/account';
+import PollPage from '../pages/poll';
+import NotFoundPage from '../pages/404';
 
 function App() {
   return (
@@ -17,9 +19,13 @@ function App() {
           <Layout>
             <Routes>
               <Route path="/">
-                <Route index element={<Home />} />
-                <Route path="account" element={<Account />} />
+                <Route index element={<HomePage />} />
+                <Route path="account" element={<AccountPage />} />
+                <Route path="polls">
+                  <Route path=":ownerId/:pollId" element={<PollPage />} />
+                </Route>
               </Route>
+              <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Layout>
         </AuthProvider>

@@ -1,19 +1,19 @@
 import React, { useEffect, useContext, useState } from 'react';
-import { signInWithRedirect, getRedirectResult, GoogleAuthProvider, UserCredential } from 'firebase/auth';
+import { signInWithRedirect, GoogleAuthProvider } from 'firebase/auth';
 import { ref, query, onValue } from 'firebase/database';
 
 import { Button, Center, Heading } from '@chakra-ui/react';
 import { FaGoogle, FaSignOutAlt } from 'react-icons/fa';
 
 import { auth, db } from '../firebase';
-import { Polls } from '../db';
+import { Polls, sortByTimestamp } from '../db';
 import { AuthContext } from '../components/AuthProvider';
-import PollItem from '../PollItem';
+import PollItem from '../components/PollItem';
 
 const signInWithGoogle = () => signInWithRedirect(auth, new GoogleAuthProvider());
 const logOut = () => auth.signOut();
 
-function Account() {
+function AccountPage() {
   const currentUser = useContext(AuthContext);
   const [polls, setPolls] = useState<Polls>({});
 
@@ -25,16 +25,7 @@ function Account() {
     }
   }, [currentUser]);
 
-  const sortedPollsUuids =
-    polls !== null
-      ? Object.keys(polls).sort((a, b) => {
-          const tsA = polls[a].timestamp;
-          const tsB = polls[b].timestamp;
-          if (tsA > tsB) return -1;
-          else if (tsA === tsB) return 0;
-          else return 1;
-        })
-      : [];
+  const sortedPollsUuids = polls !== null ? sortByTimestamp(polls) : [];
 
   if (currentUser !== null) {
     return (
@@ -67,7 +58,7 @@ function Account() {
           </Heading>
         </Center>
         {sortedPollsUuids.map((uuid) => (
-          <PollItem poll={polls[uuid]} uuid={uuid} />
+          <PollItem poll={polls[uuid]} uuid={uuid} key={uuid} />
         ))}
       </div>
     );
@@ -93,4 +84,4 @@ function Account() {
   );
 }
 
-export default Account;
+export default AccountPage;

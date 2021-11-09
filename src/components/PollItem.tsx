@@ -2,7 +2,9 @@ import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { Flex, Text, Button, Spacer, Link } from '@chakra-ui/react';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
-import { removePoll, Poll } from './db';
+
+import { auth } from '../firebase';
+import { removePoll, Poll } from '../db';
 
 interface PollItemProps {
   uuid: string;
@@ -15,7 +17,7 @@ function PollItem({ uuid, poll }: PollItemProps) {
   return (
     <Flex>
       <Text fontSize="3xl">
-        <Link as={RouterLink} to={`/polls/${uuid}`}>
+        <Link as={RouterLink} to={`/polls/${auth.currentUser?.uid}/${uuid}`}>
           {poll.name} <ExternalLinkIcon mx="2px" />
         </Link>
       </Text>

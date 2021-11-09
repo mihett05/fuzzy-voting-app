@@ -27,9 +27,11 @@ function Header() {
   return (
     <Container maxW="container.xl">
       <Flex>
-        <Heading as="h1" size="xl">
-          Fuzzy Voting App
-        </Heading>
+        <Link to="/">
+          <Heading as="h1" size="xl">
+            Fuzzy Voting App
+          </Heading>
+        </Link>
         <Spacer />
         <Box p="2">
           <Button onClick={onCreatePoll} isLoading={creatingPollState.loading}>
