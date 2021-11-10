@@ -8,11 +8,16 @@ export type Poll = {
   timestamp: number;
   multiChoice: boolean;
   variants?: Record<string, Variant>;
+  votes?: Record<string, Vote>;
 };
 
 export type Variant = {
   content: string;
   timestamp: number;
+};
+
+export type Vote = {
+  variant: string;
 };
 
 export type Polls = Record<string, Poll>;
@@ -84,6 +89,20 @@ export const removePollVariant = async (pollUuid: string, variantUuid: string) =
     const pollVariantRef = ref(db, `polls/${auth.currentUser.uid}/${pollUuid}/variants/${variantUuid}`);
     await remove(pollVariantRef);
   }
+};
+
+export const voteInPoll = async (ownerUid: string, pollUuid: string, variantUuid: string): Promise<boolean> => {
+  if (auth.currentUser) {
+    const pollVotesRef = ref(db, `polls/${auth.currentUser.uid}/${pollUuid}/votes/${auth.currentUser.uid}`);
+    try {
+      await set(pollVotesRef, {
+        variant: variantUuid,
+      });
+      return true;
+    } catch (e) {}
+  }
+
+  return false;
 };
 
 export const sortByTimestamp = (uuids: Record<string, { timestamp: number }>) =>

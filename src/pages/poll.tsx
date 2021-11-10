@@ -20,11 +20,8 @@ function PollPage() {
               <Center>
                 <Heading>{poll.name}</Heading>
               </Center>
-              {isOwner ? (
-                <PollEdit poll={poll} pollId={pollId} />
-              ) : (
-                <PollVote poll={poll} pollId={pollId} ownerId={ownerId} />
-              )}
+              {isOwner ? <PollEdit poll={poll} pollId={pollId} /> : null}
+              <PollVote poll={poll} pollId={pollId} ownerId={ownerId} />
             </>
           );
         }}
