@@ -7,6 +7,7 @@ export type Poll = {
   name: string;
   timestamp: number;
   multiChoice: boolean;
+  anonymous: boolean;
   variants?: Record<string, Variant>;
   votes?: Record<string, Vote>;
 };
@@ -35,6 +36,7 @@ export const createPoll = async (): Promise<string | null> => {
       name: `Poll ${uuid}`,
       timestamp: new Date().getTime(),
       multiChoice: false,
+      anonymous: false,
     } as Poll);
 
     return uuid;
