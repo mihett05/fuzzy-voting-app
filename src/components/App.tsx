@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import { ChakraProvider } from '@chakra-ui/react';
 
+import theme from '../theme';
+
 import Layout from './Layout';
 import AuthProvider from './AuthProvider';
 
@@ -16,7 +18,7 @@ import PollEditPage from '../pages/pollEdit';
 
 function App() {
   return (
-    <ChakraProvider>
+    <ChakraProvider theme={theme}>
       <BrowserRouter>
         <AuthProvider>
           <Layout>
