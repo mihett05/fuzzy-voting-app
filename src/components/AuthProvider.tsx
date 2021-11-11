@@ -3,6 +3,7 @@ import { User } from 'firebase/auth';
 import { Center, CircularProgress } from '@chakra-ui/react';
 
 import { auth } from '../firebase';
+import { setName } from '../db';
 
 export const AuthContext = createContext<User | null>(null);
 
@@ -16,6 +17,9 @@ function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     return auth.onAuthStateChanged((user) => {
+      if (user !== null) {
+        setName();
+      }
       setCurrentUser(user);
       setLoading(false);
     });

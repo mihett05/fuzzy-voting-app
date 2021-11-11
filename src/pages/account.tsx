@@ -1,17 +1,15 @@
 import React, { useEffect, useContext, useState } from 'react';
-import { signInWithRedirect, GoogleAuthProvider } from 'firebase/auth';
+import { signInWithRedirect, GoogleAuthProvider, signInAnonymously } from 'firebase/auth';
 import { ref, query, onValue } from 'firebase/database';
 
-import { Button, Center, Heading } from '@chakra-ui/react';
-import { FaGoogle, FaSignOutAlt } from 'react-icons/fa';
+import { Button, Center, Heading, useDisclosure } from '@chakra-ui/react';
+import { FaGoogle, FaSignOutAlt, FaUser } from 'react-icons/fa';
 
 import { auth, db } from '../firebase';
 import { Polls, sortByTimestamp } from '../db';
 import { AuthContext } from '../components/AuthProvider';
 import PollItem from '../components/PollItem';
-
-const signInWithGoogle = () => signInWithRedirect(auth, new GoogleAuthProvider());
-const logOut = () => auth.signOut();
+import SignInProvider from '../components/SignInProvider';
 
 function AccountPage() {
   const currentUser = useContext(AuthContext);
@@ -26,6 +24,9 @@ function AccountPage() {
   }, [currentUser]);
 
   const sortedPollsUuids = polls !== null ? sortByTimestamp(polls) : [];
+
+  const signInWithGoogle = () => signInWithRedirect(auth, new GoogleAuthProvider());
+  const logOut = () => auth.signOut();
 
   if (currentUser !== null) {
     return (
@@ -75,11 +76,7 @@ function AccountPage() {
           Sign In using one of this methods:
         </Heading>
       </Center>
-      <Center>
-        <Button onClick={signInWithGoogle} leftIcon={<FaGoogle />} colorScheme="red">
-          Google
-        </Button>
-      </Center>
+      <SignInProvider name="Google" onSignIn={signInWithGoogle} icon={<FaGoogle />} colorScheme="red" />
     </div>
   );
 }

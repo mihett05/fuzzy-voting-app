@@ -1,29 +1,48 @@
 import React from 'react';
-import { useParams } from 'react-router';
-import { Heading, Center } from '@chakra-ui/react';
+import { Outlet, useParams, useLocation, useNavigate, useOutlet } from 'react-router';
+import { Link } from 'react-router-dom';
+import { Heading, Center, Flex, Button } from '@chakra-ui/react';
 
 import { auth } from '../firebase';
 import PollLoading from '../components/PollLoading';
-import PollEdit from '../components/PollEdit';
+import PollResults from '../components/PollResults';
 import PollVote from '../components/PollVote';
 
 function PollPage() {
   const { ownerId: paramOwner, pollId: paramPoll } = useParams();
+  const outlet = useOutlet();
+  const location = useLocation();
 
   return (
     <div>
       <PollLoading ownerId={paramOwner} pollId={paramPoll}>
         {(poll, ownerId, pollId) => {
           const isOwner = auth.currentUser?.uid === ownerId;
+          const isVoted = poll.votes && auth.currentUser && poll.votes[auth.currentUser.uid] !== undefined;
+
           return (
             <>
-              <Center>
-                <Heading>{poll.name}</Heading>
-              </Center>
-              {isOwner ? (
-                <PollEdit poll={poll} pollId={pollId} />
+              {!location.pathname.endsWith('edit') && (
+                <Center>
+                  <Heading>{poll.name}</Heading>
+                </Center>
+              )}
+              {isOwner && (
+                <>
+                  <Flex direction="row-reverse">
+                    <Link to="edit">
+                      <Button bgColor="teal.400">Edit</Button>
+                    </Link>
+                  </Flex>
+                </>
+              )}
+
+              {outlet ? ( // show current state screen or selected(view, results, edit)
+                <Outlet />
+              ) : isVoted ? (
+                <PollResults poll={poll} />
               ) : (
-                <PollVote poll={poll} pollId={pollId} ownerId={ownerId} />
+                <PollVote poll={poll} ownerId={ownerId} pollId={pollId} />
               )}
             </>
           );

@@ -22,14 +22,6 @@ function PollItem({ uuid, poll }: PollItemProps) {
         </Link>
       </Text>
       <Spacer />
-      <Button
-        bgColor="teal"
-        style={{
-          marginRight: '0.5vw',
-        }}
-      >
-        Edit
-      </Button>
       <Button bgColor="red.600" onClick={onDelete}>
         Delete
       </Button>

@@ -6,13 +6,17 @@ import { auth, db } from './firebase';
 export type Poll = {
   name: string;
   timestamp: number;
-  multiChoice: boolean;
   variants?: Record<string, Variant>;
+  votes?: Record<string, Vote>;
 };
 
 export type Variant = {
   content: string;
   timestamp: number;
+};
+
+export type Vote = {
+  variant: string;
 };
 
 export type Polls = Record<string, Poll>;
@@ -29,7 +33,6 @@ export const createPoll = async (): Promise<string | null> => {
     await set(pollRef, {
       name: `Poll ${uuid}`,
       timestamp: new Date().getTime(),
-      multiChoice: false,
     } as Poll);
 
     return uuid;
@@ -86,6 +89,20 @@ export const removePollVariant = async (pollUuid: string, variantUuid: string) =
   }
 };
 
+export const voteInPoll = async (ownerUid: string, pollUuid: string, variantUuid: string): Promise<boolean> => {
+  if (auth.currentUser) {
+    const pollVotesRef = ref(db, `polls/${ownerUid}/${pollUuid}/votes/${auth.currentUser.uid}`);
+    try {
+      await set(pollVotesRef, {
+        variant: variantUuid,
+      });
+      return true;
+    } catch (e) {}
+  }
+
+  return false;
+};
+
 export const sortByTimestamp = (uuids: Record<string, { timestamp: number }>) =>
   Object.keys(uuids).sort((a: string, b: string) => {
     const tsA = uuids[a].timestamp;
@@ -95,3 +112,10 @@ export const sortByTimestamp = (uuids: Record<string, { timestamp: number }>) =>
     else if (tsA === tsB) return 0;
     else return 1;
   });
+
+export const setName = async () => {
+  if (auth.currentUser !== null) {
+    const userRef = ref(db, `users/${auth.currentUser?.uid}`);
+    await set(userRef, auth.currentUser.displayName || 'Unknown user');
+  }
+};

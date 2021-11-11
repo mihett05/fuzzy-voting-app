@@ -1,7 +1,8 @@
-import React from 'react';
-import { Box, Flex, Heading, IconButton, Radio, RadioGroup, Spacer, Stack } from '@chakra-ui/react';
+import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router';
+import { Heading, Radio, RadioGroup, Stack, Button } from '@chakra-ui/react';
 
-import { Poll, sortByTimestamp } from '../db';
+import { Poll, sortByTimestamp, voteInPoll } from '../db';
 
 interface PollVoteProps {
   poll: Poll;
@@ -10,7 +11,17 @@ interface PollVoteProps {
 }
 
 function PollVote({ poll, ownerId, pollId }: PollVoteProps) {
-  const sortedVariantsUuids = poll.variants !== undefined ? sortByTimestamp(poll.variants) : [];
+  const sortedVariantsUuids = poll.variants ? sortByTimestamp(poll.variants) : [];
+  const [variant, setVariant] = useState(sortedVariantsUuids.length > 0 ? sortedVariantsUuids[0] : '');
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const onVote = async () => {
+    await voteInPoll(ownerId, pollId, variant);
+    if (location.pathname.endsWith('view')) {
+      navigate('..');
+    }
+  };
 
   if (!poll.variants) {
     return <Heading fontSize="2xl">Poll doesn't have variants</Heading>;
@@ -23,6 +34,8 @@ function PollVote({ poll, ownerId, pollId }: PollVoteProps) {
         style={{
           margin: '1em 0',
         }}
+        value={variant}
+        onChange={setVariant}
       >
         <Stack>
           {sortedVariantsUuids.map((uuid) => (
@@ -32,6 +45,9 @@ function PollVote({ poll, ownerId, pollId }: PollVoteProps) {
           ))}
         </Stack>
       </RadioGroup>
+      <Button onClick={onVote} aria-label="Submit">
+        Vote
+      </Button>
     </>
   );
 }
