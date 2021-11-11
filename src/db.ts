@@ -112,3 +112,10 @@ export const sortByTimestamp = (uuids: Record<string, { timestamp: number }>) =>
     else if (tsA === tsB) return 0;
     else return 1;
   });
+
+export const setName = async () => {
+  if (auth.currentUser !== null) {
+    const userRef = ref(db, `users/${auth.currentUser?.uid}`);
+    await set(userRef, auth.currentUser.displayName || 'Unknown user');
+  }
+};
