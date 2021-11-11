@@ -4,6 +4,7 @@
     ".read": false,
     ".write": false,
     "polls": {
+      ".read": true,
       "$owner": {
         ".read": true,
         ".write": "$owner === auth.uid",
