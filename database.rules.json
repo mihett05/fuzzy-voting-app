@@ -4,9 +4,18 @@
     ".read": false,
     ".write": false,
     "polls": {
-      "$uid": {
+      "$owner": {
         ".read": true,
-        ".write": "$uid === auth.uid"
+        ".write": "$owner === auth.uid",
+        "$poll": {
+          "votes": {
+            ".read": "data.hasChild(auth.uid) || $owner === auth.uid",
+            "$vote_user": {
+              ".write": "!data.parent().hasChild(auth.uid) && $vote_user === auth.uid",
+              ".validate": "!data.parent().hasChild(auth.uid) && $vote_user === auth.uid && data.parent().parent().child(\"variants\").hasChild(newData.child(\"variant\").val())"
+            }
+          }
+        }
       }
     }
   }

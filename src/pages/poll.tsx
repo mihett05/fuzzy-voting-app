@@ -11,6 +11,7 @@ import PollVote from '../components/PollVote';
 function PollPage() {
   const { ownerId: paramOwner, pollId: paramPoll } = useParams();
   const outlet = useOutlet();
+  const location = useLocation();
 
   return (
     <div>
@@ -21,9 +22,11 @@ function PollPage() {
 
           return (
             <>
-              <Center>
-                <Heading>{poll.name}</Heading>
-              </Center>
+              {!location.pathname.endsWith('edit') && (
+                <Center>
+                  <Heading>{poll.name}</Heading>
+                </Center>
+              )}
               {isOwner && (
                 <>
                   <Flex direction="row-reverse">
@@ -34,7 +37,7 @@ function PollPage() {
                 </>
               )}
 
-              {outlet ? (
+              {outlet ? ( // show current state screen or selected(view, results, edit)
                 <Outlet />
               ) : isVoted ? (
                 <PollResults poll={poll} />

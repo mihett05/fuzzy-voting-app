@@ -21,8 +21,6 @@ function AuthProvider({ children }: AuthProviderProps) {
     });
   });
 
-  console.log(auth.currentUser);
-
   return (
     <AuthContext.Provider value={currentUser}>
       {loading ? (
