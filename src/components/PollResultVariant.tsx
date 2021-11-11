@@ -25,7 +25,7 @@ function PollResultVariant({ name, value }: PollResultVariantProps) {
             transform: 'translate(0, -25%)',
           }}
         >
-          {value}%
+          {value.toFixed(1)}%
         </Text>
       </Flex>
     </>
