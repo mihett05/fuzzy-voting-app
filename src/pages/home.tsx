@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { ref, query, onValue } from 'firebase/database';
-import { Center, Heading, SimpleGrid } from '@chakra-ui/react';
+import { Center, Heading, Link, SimpleGrid } from '@chakra-ui/react';
 
 import { Polls } from '../db';
-import { db } from '../firebase';
+import { auth, db } from '../firebase';
 
 import PollCard from '../components/PollCard';
+import { Link as RouterLink } from 'react-router-dom';
 
 function HomePage() {
   const [polls, setPolls] = useState<Polls>({});
@@ -34,6 +35,18 @@ function HomePage() {
       <Center>
         <Heading mb={5}>Polls</Heading>
       </Center>
+      {auth.currentUser === null && (
+        <Center>
+          <Heading>
+            You have to{' '}
+            <Link as={RouterLink} to="/account" color="blue.300">
+              Sign In
+            </Link>{' '}
+            your account to view polls
+          </Heading>
+        </Center>
+      )}
+
       <SimpleGrid minChildWidth="300px" spacing={5}>
         {Object.keys(polls).map((uuid) => (
           <PollCard poll={polls[uuid]} uuid={uuid} key={uuid} name={names[uuid.split('/')[0]] || 'Unknown user'} />
