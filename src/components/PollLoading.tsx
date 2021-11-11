@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
+import { Link as RouterLink } from 'react-router-dom';
 import { onValue, query, ref } from 'firebase/database';
+import { Center, Heading, Link } from '@chakra-ui/react';
 
 import { Poll } from '../db';
 import { auth, db } from '../firebase';
@@ -24,6 +26,20 @@ function PollLoading({ ownerId, pollId, children }: PollLoadingProps) {
       });
     }
   }, [ownerId, pollId, setPoll]);
+
+  if (auth.currentUser === null) {
+    return (
+      <Center>
+        <Heading>
+          You have to{' '}
+          <Link as={RouterLink} to="/account" color="blue.300">
+            Sign In
+          </Link>{' '}
+          your account to view a poll
+        </Heading>
+      </Center>
+    );
+  }
 
   if (isLoading) {
     return <div>Poll is loading...</div>;

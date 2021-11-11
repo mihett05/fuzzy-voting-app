@@ -10,8 +10,6 @@ import PollVote from '../components/PollVote';
 
 function PollPage() {
   const { ownerId: paramOwner, pollId: paramPoll } = useParams();
-  const location = useLocation();
-  const navigate = useNavigate();
   const outlet = useOutlet();
 
   return (

@@ -95,7 +95,7 @@ export const removePollVariant = async (pollUuid: string, variantUuid: string) =
 
 export const voteInPoll = async (ownerUid: string, pollUuid: string, variantUuid: string): Promise<boolean> => {
   if (auth.currentUser) {
-    const pollVotesRef = ref(db, `polls/${auth.currentUser.uid}/${pollUuid}/votes/${auth.currentUser.uid}`);
+    const pollVotesRef = ref(db, `polls/${ownerUid}/${pollUuid}/votes/${auth.currentUser.uid}`);
     try {
       await set(pollVotesRef, {
         variant: variantUuid,
