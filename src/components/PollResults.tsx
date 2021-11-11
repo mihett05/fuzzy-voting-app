@@ -31,12 +31,26 @@ function PollResults({ poll }: PollResultsProps) {
         }
       });
 
-      return variants;
+      const sortedVariants: Record<string, number> = {}; // sort from the biggest to the lowest
+      Object.keys(variants)
+        .sort((a, b) => {
+          const vA = variants[a];
+          const vB = variants[b];
+
+          if (vA < vB) return 1;
+          else if (vA === vB) return 0;
+          else return -1;
+        })
+        .forEach((variant) => {
+          sortedVariants[variant] = variants[variant];
+        });
+
+      return sortedVariants;
     }
     return {};
   }, [poll.votes, poll.variants]);
   if (!poll.variants || !poll.votes) return <></>;
-  console.log(votes);
+
   return (
     <>
       <Heading fontSize="2xl">Results of the poll:</Heading>
@@ -45,7 +59,7 @@ function PollResults({ poll }: PollResultsProps) {
       </Text>
       {Object.keys(votes).map((name) => {
         const percent: number = votes[name];
-        return <PollResultVariant name={name} value={percent} />;
+        return <PollResultVariant name={name} value={percent} key={`${name}_${percent}`} />;
       })}
 
       <Text fontSize="2xl">{votedPersons === 1 ? '1 person has voted' : `${votedPersons} persons have voted`}</Text>

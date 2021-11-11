@@ -1,15 +1,18 @@
 import React from 'react';
-import { useParams } from 'react-router';
-import { Heading, Center } from '@chakra-ui/react';
+import { Outlet, useParams, useLocation, useNavigate, useOutlet } from 'react-router';
+import { Link } from 'react-router-dom';
+import { Heading, Center, Flex, Button } from '@chakra-ui/react';
 
 import { auth } from '../firebase';
 import PollLoading from '../components/PollLoading';
-import PollEdit from '../components/PollEdit';
-import PollVote from '../components/PollVote';
 import PollResults from '../components/PollResults';
+import PollVote from '../components/PollVote';
 
 function PollPage() {
   const { ownerId: paramOwner, pollId: paramPoll } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const outlet = useOutlet();
 
   return (
     <div>
@@ -23,8 +26,23 @@ function PollPage() {
               <Center>
                 <Heading>{poll.name}</Heading>
               </Center>
-              {isOwner && <PollEdit poll={poll} pollId={pollId} />}
-              {isVoted ? <PollResults poll={poll} /> : <PollVote poll={poll} pollId={pollId} ownerId={ownerId} />}
+              {isOwner && (
+                <>
+                  <Flex direction="row-reverse">
+                    <Link to="edit">
+                      <Button bgColor="teal.400">Edit</Button>
+                    </Link>
+                  </Flex>
+                </>
+              )}
+
+              {outlet ? (
+                <Outlet />
+              ) : isVoted ? (
+                <PollResults poll={poll} />
+              ) : (
+                <PollVote poll={poll} ownerId={ownerId} pollId={pollId} />
+              )}
             </>
           );
         }}
